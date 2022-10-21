@@ -83,18 +83,30 @@ exports.addUser = addUser;
  */
 const getAllReservations = function (guest_id, limit = 10) {
   const values = [guest_id, limit];
-  const query = `SELECT reservations.id, properties.title, properties.cost_per_night,
-  reservations.start_date, avg(property_reviews.rating) as average_rating,
-  properties.number_of_bathrooms, properties.number_of_bedrooms, properties.parking_spaces,
-  properties.thumbnail_photo_url
+  const query = `
+    SELECT reservations.id, 
+      properties.title, 
+      properties.cost_per_night,
+      reservations.start_date, 
+      avg(property_reviews.rating) as average_rating,
+      properties.number_of_bathrooms, 
+      properties.number_of_bedrooms, 
+      properties.parking_spaces,
+      properties.thumbnail_photo_url
 
-  FROM properties
-  JOIN reservations ON properties.id = property_id
-  JOIN property_reviews ON properties.id = property_reviews.property_id
-  WHERE reservations.guest_id = $1
-  GROUP BY reservations.id, properties.title, properties.cost_per_night, properties.number_of_bathrooms,properties.number_of_bedrooms, properties.parking_spaces, properties.thumbnail_photo_url
-  ORDER BY start_date DESC
-  LIMIT $2;`;
+    FROM properties
+    JOIN reservations ON properties.id = property_id
+    JOIN property_reviews ON properties.id = property_reviews.property_id
+    WHERE reservations.guest_id = $1
+    GROUP BY reservations.id, 
+      properties.title, 
+      properties.cost_per_night, 
+      properties.number_of_bathrooms,
+      properties.number_of_bedrooms, 
+      properties.parking_spaces, 
+      properties.thumbnail_photo_url
+    ORDER BY start_date DESC
+    LIMIT $2;`;
 
   return pool.query(query, values).then((result) => {
     console.log(result.rows);
@@ -183,12 +195,6 @@ const getAllProperties = function (options, limit = 10) {
   return pool.query(queryString, queryParams).then((res) => res.rows);
 };
 
-//   const limitedProperties = {};
-//   for (let i = 1; i <= limit; i++) {
-//     limitedProperties[i] = properties[i];
-//   }
-//   return Promise.resolve(limitedProperties);
-// };
 exports.getAllProperties = getAllProperties;
 
 /**
